@@ -14,6 +14,7 @@ export default function TodoEditModal({ todo, setTodos, onClose }: Props) {
   const [priority, setPriority] = useState<"Low" | "Medium" | "High">("Medium");
   const [subtasks, setSubtasks] = useState<Subtask[]>(todo?.subtasks || []);
   const [category, setCategory] = useState(todo?.category || "");
+
   useEffect(() => {
     if (todo) {
       setText(todo.text);
@@ -25,17 +26,19 @@ export default function TodoEditModal({ todo, setTodos, onClose }: Props) {
   }, [todo]);
 
   if (!todo) return null;
+
   const addSubtask = () => {
     setSubtasks((prev) => [
       ...prev,
       { id: Date.now(), text: "", completed: false },
     ]);
   };
+
   const saveChanges = () => {
     setTodos((prev) =>
       prev.map((t) =>
         t.id === todo!.id
-          ? { ...t, text, dueDate, priority, category, subtasks } // update parent todos
+          ? { ...t, text, dueDate, priority, category, subtasks }
           : t
       )
     );
@@ -43,7 +46,7 @@ export default function TodoEditModal({ todo, setTodos, onClose }: Props) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-black/90 p-6 rounded-2xl w-full max-w-md flex flex-col gap-4">
         <div className="flex justify-between items-center">
           <h2 className="text-lg font-semibold">Edit Task</h2>
@@ -53,13 +56,15 @@ export default function TodoEditModal({ todo, setTodos, onClose }: Props) {
             onClick={onClose}
           />
         </div>
+
         <input
           type="text"
           value={text}
           onChange={(e) => setText(e.target.value)}
           className="px-4 py-2 rounded-lg bg-black/30 border border-gray-600 text-white"
         />
-        <div className="flex gap-2">
+
+        <div className="flex gap-2 flex-wrap">
           <input
             type="date"
             value={dueDate}
@@ -75,8 +80,19 @@ export default function TodoEditModal({ todo, setTodos, onClose }: Props) {
             <option>Medium</option>
             <option>High</option>
           </select>
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="px-4 py-2 rounded-lg bg-black/30 border border-gray-600 text-white"
+          >
+            <option value="">No Category</option>
+            <option>Work</option>
+            <option>Personal</option>
+            <option>Shopping</option>
+          </select>
         </div>
-        <div className="mt-2 flex flex-col gap-2">
+
+        <div className="flex flex-col gap-2">
           <h3 className="text-sm font-semibold">Subtasks</h3>
           {subtasks.map((sub, idx) => (
             <div key={sub.id} className="flex gap-2 items-center">
@@ -100,9 +116,7 @@ export default function TodoEditModal({ todo, setTodos, onClose }: Props) {
                 }}
               />
               <button
-                onClick={() => {
-                  setSubtasks(subtasks.filter((_, i) => i !== idx));
-                }}
+                onClick={() => setSubtasks(subtasks.filter((_, i) => i !== idx))}
                 className="text-red-400"
               >
                 X
@@ -111,8 +125,8 @@ export default function TodoEditModal({ todo, setTodos, onClose }: Props) {
           ))}
           <button
             type="button"
-            onClick={addSubtask} 
-            className="text-indigo-400 hover:text-indigo-500"
+            onClick={addSubtask}
+            className="text-indigo-400 hover:text-indigo-500 mt-1"
           >
             + Add Subtask
           </button>
@@ -120,7 +134,7 @@ export default function TodoEditModal({ todo, setTodos, onClose }: Props) {
 
         <button
           onClick={saveChanges}
-          className="bg-indigo-500 hover:bg-indigo-600 px-4 py-2 rounded-lg flex items-center justify-center gap-2"
+          className="bg-indigo-500 hover:bg-indigo-600 px-4 py-2 rounded-lg flex items-center justify-center gap-2 mt-2"
         >
           <Save size={20} /> Save
         </button>

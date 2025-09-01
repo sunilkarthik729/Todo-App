@@ -2,7 +2,6 @@ import type { Todo } from "../types/todo";
 import TodoCard from "./TodoCard";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
-
 interface Props {
   todos: Todo[];
   setTodos: React.Dispatch<React.SetStateAction<Todo[]>>;
@@ -14,9 +13,7 @@ interface Props {
 export default function TodoListSection({
   todos,
   setTodos,
-  filter,
   openEditModal,
-  searchQuery = "",
 }: Props) {
   const handleDragEnd = (result: any) => {
     if (!result.destination) return;
@@ -26,25 +23,19 @@ export default function TodoListSection({
     setTodos(items);
   };
 
-  const filteredTodos = todos
-    .filter((todo) => {
-      if (filter === "all") return true;
-      if (filter === "active") return !todo.completed;
-      return todo.completed;
-    })
-    .filter((todo) =>
-      todo.text.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
       <Droppable droppableId="todos">
         {(provided) => (
-          <div {...provided.droppableProps} ref={provided.innerRef} className="flex flex-col gap-3 mb-6">
-            {filteredTodos.length === 0 ? (
+          <div
+            {...provided.droppableProps}
+            ref={provided.innerRef}
+            className="flex flex-col gap-3 mb-6"
+          >
+            {todos.length === 0 ? (
               <p className="text-center text-gray-400">No tasks found</p>
             ) : (
-              filteredTodos.map((todo, index) => (
+              todos.map((todo, index) => (
                 <Draggable key={todo.id} draggableId={todo.id.toString()} index={index}>
                   {(provided) => (
                     <div
@@ -52,7 +43,11 @@ export default function TodoListSection({
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
                     >
-                      <TodoCard todo={todo} setTodos={setTodos} openEditModal={openEditModal} />
+                      <TodoCard
+                        todo={todo}
+                        setTodos={setTodos}
+                        openEditModal={openEditModal}
+                      />
                     </div>
                   )}
                 </Draggable>

@@ -9,19 +9,18 @@ interface Props {
 
 export default function TodoCard({ todo, setTodos, openEditModal }: Props) {
   const toggleTodo = () => {
-    setTodos((prev) =>
-      prev.map((t) =>
+    setTodos(prev =>
+      prev.map(t =>
         t.id === todo.id ? { ...t, completed: !t.completed } : t
       )
     );
   };
 
   const deleteTodo = () => {
-    setTodos((prev) => prev.filter((t) => t.id !== todo.id));
+    setTodos(prev => prev.filter(t => t.id !== todo.id));
   };
 
-  const isOverdue =
-    todo.dueDate && new Date(todo.dueDate) < new Date() && !todo.completed;
+  const isOverdue = todo.dueDate && new Date(todo.dueDate) < new Date() && !todo.completed;
 
   const getPriorityColor = (priority?: string) => {
     switch (priority) {
@@ -42,7 +41,7 @@ export default function TodoCard({ todo, setTodos, openEditModal }: Props) {
         isOverdue ? "border-red-500" : "border-transparent"
       }`}
     >
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center flex-wrap gap-2">
         <span
           onClick={toggleTodo}
           className={`cursor-pointer text-lg ${
@@ -69,23 +68,19 @@ export default function TodoCard({ todo, setTodos, openEditModal }: Props) {
           />
         </div>
       </div>
+
       {todo.subtasks && todo.subtasks.length > 0 && (
         <ul className="ml-4 mt-2 flex flex-col gap-1">
-          {todo.subtasks.map((sub) => (
-            <li
-              key={sub.id}
-              className={`flex items-center gap-2 ${
-                sub.completed ? "line-through text-gray-400" : ""
-              }`}
-            >
+          {todo.subtasks.map(sub => (
+            <li key={sub.id} className={`flex items-center gap-2 ${sub.completed ? "line-through text-gray-400" : ""}`}>
               <input
                 type="checkbox"
                 checked={sub.completed}
                 onChange={() => {
-                  setTodos((prev) =>
-                    prev.map((t) => {
+                  setTodos(prev =>
+                    prev.map(t => {
                       if (t.id !== todo.id) return t;
-                      const newSubs = t.subtasks!.map((s) =>
+                      const newSubs = t.subtasks!.map(s =>
                         s.id === sub.id ? { ...s, completed: !s.completed } : s
                       );
                       return { ...t, subtasks: newSubs };
@@ -99,19 +94,22 @@ export default function TodoCard({ todo, setTodos, openEditModal }: Props) {
         </ul>
       )}
 
-      <div className="flex justify-between items-center text-sm text-gray-300">
+      <div className="flex justify-between items-center text-sm text-gray-300 flex-wrap gap-2">
         <span>
           {todo.dueDate
             ? `Due: ${new Date(todo.dueDate).toLocaleDateString()}`
             : "No Due Date"}
         </span>
         <span
-          className={`px-2 py-1 rounded-full text-xs font-semibold ${getPriorityColor(
-            todo.priority
-          )}`}
+          className={`px-2 py-1 rounded-full text-xs font-semibold ${getPriorityColor(todo.priority)}`}
         >
           {todo.priority}
         </span>
+        {todo.category && (
+          <span className="px-2 py-1 rounded-full bg-indigo-400 text-black text-xs font-semibold">
+            {todo.category}
+          </span>
+        )}
       </div>
     </div>
   );
